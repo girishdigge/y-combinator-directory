@@ -1,5 +1,7 @@
-import StartupCard from '@/components/StartupCard';
+import StartupCard, { StartupTypeCard } from '@/components/StartupCard';
 import SearchForm from '../../components/SearchForm';
+import { STARTUPS_QUERY } from '@/sanity/lib/queries';
+import { sanityFetch, SanityLive } from '@/sanity/lib/live';
 
 const Home = async ({
   searchParams,
@@ -7,19 +9,8 @@ const Home = async ({
   searchParams: Promise<{ query?: string }>;
 }) => {
   const query = (await searchParams).query;
-  const posts = [
-    {
-      _createdAt: new Date(),
-      views: 55,
-      author: { _id: 1, name: 'Ashley' },
-      _id: 1,
-      description: 'This is a description.',
-      image:
-        'https://yt3.ggpht.com/yti/ANjgQV9MLXRJGkNoWlOYBZlSx14MAczj8m2r8IY32pfCDYdeghQ=s88-c-k-c0x00ffffff-no-rj',
-      category: 'Robots',
-      title: 'We Robots',
-    },
-  ];
+  const params = { search: query || null };
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY, params });
   return (
     <>
       <section className='pink_container'>
@@ -41,7 +32,7 @@ const Home = async ({
 
         <ul className='mt-7 card_grid'>
           {posts?.length > 0 ? (
-            posts.map((post: StartupCardType) => (
+            posts.map((post: StartupTypeCard) => (
               <StartupCard key={post?._id} post={post} />
             ))
           ) : (
@@ -49,6 +40,7 @@ const Home = async ({
           )}
         </ul>
       </section>
+      <SanityLive />
     </>
   );
 };
